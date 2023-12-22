@@ -181,22 +181,20 @@ namespace PKHeX.Core.Injection
                 chunk++;
             var cmd = SwitchCommand.GetHeapBase();
             SendInternal(cmd);
-
-            var buffer = new byte[17];
-            var _ = ReadInternal(buffer);
-            return Convert.ToUInt64(string.Concat(buffer.Select(z => (char)z)).Trim(), 16);
+            public byte[] SliceSafe(ReadOnlySpan<byte> src, int offset, int length)
+            {
+            var delta = src.Length - offset;
+              if (delta < length)
+                 length = delta;        
+        
+            byte[] data = new byte[length];
+            Buffer.BlockCopy(src.ToArray(), offset, data, 0, data.Length);
+            return data;
+            }
+            public ulong GetHeapBase()          
         }
-
-        public string GetTitleID()
-        {
-            var cmd = SwitchCommand.GetTitleID();
-            SendInternal(cmd);
-
-            var buffer = new byte[17];
-            var _ = ReadInternal(buffer);
-            return Encoding.ASCII.GetString(buffer).Trim();
-        }
-
+        var cmd = SwitchCommand.GetHeapBase();
+	
         public string GetBotbaseVersion()
         {
             var cmd = SwitchCommand.GetBotbaseVersion();
