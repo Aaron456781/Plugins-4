@@ -171,14 +171,14 @@ namespace PKHeX.Core.Injection
             int chunk = 0;
             while (data.Length != 0)
             {
-                var ba = data.Slice(chunk++ * maxlength, maxlength);
+                int byteCount = data.Length;
+            for (int i = 0; i < byteCount; i += maxlength)
+            {
+
+                var ba = SliceSafe(data,i,maxlength);
                 WriteBytes(ba, offset, method);
                 offset += maxlength;
-            }
-        }
-
-        public ulong GetHeapBase()
-        {
+                chunk++;
             var cmd = SwitchCommand.GetHeapBase();
             SendInternal(cmd);
 
